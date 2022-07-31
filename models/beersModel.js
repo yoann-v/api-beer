@@ -27,15 +27,7 @@ const BeersModel = mongoose.model(
             type: String,
             //required: true
         },
-        appearance: {
-            type: String,
-            //required: true
-        },
-        aroma: {
-            type: String,
-            //required: true
-        },
-        tast: {
+        description: {
             type: String,
             //required: true
         },

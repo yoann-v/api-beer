@@ -1,9 +1,11 @@
 const express = require('express');
 const app = express();
-require('./models/dbConfig');
-const beersRoutes = require('./routes/beersController');
+require('./data/dbConfig');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+
+const beersRoutes = require('./routes/beersRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 app.use(express.json());
 app.use(bodyParser.json());
@@ -17,5 +19,6 @@ app.use(cors());
   });
 */
 app.use('/beers', beersRoutes);
+app.use('/auth', userRoutes);
 
 app.listen(5500, () => console.log('Serveur OK : 5500'));

@@ -20,5 +20,6 @@ app.use(cors());
 */
 app.use('/beers', beersRoutes);
 app.use('/auth', userRoutes);
+app.use('/images', express.static(path.join(__dirname, 'images')))
 
 app.listen(5500, () => console.log('Serveur OK : 5500'));

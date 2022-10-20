@@ -19,12 +19,15 @@ exports.getOneBeer = (req, res) => {
 // Create
 
 exports.createBeer = (req, res) => {
-    delete req.body._id;
-    const newProductBeer = new BeersModel({
-        ...req.body
+    const beerObject = JSON.parse(req.body.thing);
+    delete beerObject._id;
+    delete beerObject._userId;
+    const beer = new BeersModel({
+        ...beerObject,
+        userId: req.auth.userId,
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     });
-
-    newProductBeer.save()
+    BeersModel.save()
         .then(() => res.status(201).json({ message: 'Produit enregistré'}))
         .catch(error => res.status(400).json({ error }));
 };
@@ -32,8 +35,22 @@ exports.createBeer = (req, res) => {
 // Update
 
 exports.updateBeer = (req, res) => {
-    BeersModel.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
-        .then(() => res.status(200).json({ message: 'Produit modifié'}))
+    const beerObject = req.file ? {
+        ...JSON.parse(req.body.BeersModel),
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    } : { ...req.body };
+
+    delete beerObject._userId;
+    BeersModel.findOne({_id: req.params.id})
+        .then((beer) => {
+            if (beer.userId != req.auth.userId) {
+                res.status(401).json({ message: 'Non-autorisé'});
+            } else {
+                BeersModel.updateOne({ _id: req.params.id}, { ...beerObject, _id: req.params.id})
+                    .then(() => res.status(200).json({ message: 'Produit modifié'}))
+                    .catch(error => res.status(401).json({ error }));
+            }
+        })
         .catch(error => res.status(400).json({ error }));
 };
 

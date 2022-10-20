@@ -2,6 +2,7 @@ const express = require('express');
 const auth = require('auth');
 const router = express.Router();
 const ObjectID = require('mongoose').Types.ObjectId;
+const multer = require('../middleware/multer-config')
 
 const beersCtrl = require('../controllers/beersControllers');
 
@@ -15,11 +16,11 @@ router.get('/:id', auth, beersCtrl.getOneBeer);
 
 // Create
 
-router.post('/', auth, beersCtrl.createBeer);
+router.post('/', auth, multer, beersCtrl.createBeer);
 
 // Update
 
-router.put('/:id', auth, beersCtrl.updateBeer);
+router.put('/:id', auth, multer, beersCtrl.updateBeer);
 
 // Delete
 

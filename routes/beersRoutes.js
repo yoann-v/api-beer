@@ -1,16 +1,15 @@
 const express = require('express');
-const auth = require('auth');
-const router = express.Router();
-const ObjectID = require('mongoose').Types.ObjectId;
+const auth = require('../middleware/auth');
 const multer = require('../middleware/multer-config')
+const router = express.Router();
 
 const beersCtrl = require('../controllers/beersControllers');
 
-// Read
+// Read all beer
 
 router.get('/', auth, beersCtrl.getAllBeer);
 
-// 404
+// Read ID beer
 
 router.get('/:id', auth, beersCtrl.getOneBeer);
 

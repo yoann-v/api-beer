@@ -11,6 +11,10 @@ const BeersModel = mongoose.model(
             type: String,
             required: true
         },
+        image: {
+            type: String,
+            //required: true
+        },
         color: {
             type: String,
             //required: true
@@ -28,6 +32,10 @@ const BeersModel = mongoose.model(
             //required: true
         },
         description: {
+            type: String,
+            //required: true
+        },
+        userId: {
             type: String,
             //required: true
         },

@@ -4,11 +4,11 @@ const router = express.Router();
 const userCtrl = require('../controllers/userControllers');
 
 
-// User email
+// Enregistrement
 
 router.post('/signup', userCtrl.signup);
 
-// User Password
+// Connexion
 
 router.post('/login', userCtrl.login);
 

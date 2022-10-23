@@ -1,4 +1,5 @@
 const { BeersModel } = require('../models/beersModel');
+const fs = require('fs');
 
 // Get all beer
 
@@ -18,16 +19,16 @@ exports.getOneBeer = (req, res) => {
 
 // Create
 
-exports.createBeer = (req, res) => {
-    const beerObject = JSON.parse(req.body.thing);
+exports.createBeer = (req, res, next) => {
+    const beerObject = JSON.parse(JSON.stringify(req.body));
     delete beerObject._id;
     delete beerObject._userId;
     const beer = new BeersModel({
         ...beerObject,
         userId: req.auth.userId,
-        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+        image: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     });
-    BeersModel.save()
+    beer.save()
         .then(() => res.status(201).json({ message: 'Produit enregistré'}))
         .catch(error => res.status(400).json({ error }));
 };
@@ -36,8 +37,8 @@ exports.createBeer = (req, res) => {
 
 exports.updateBeer = (req, res) => {
     const beerObject = req.file ? {
-        ...JSON.parse(req.body.BeersModel),
-        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+        ...JSON.parse(JSON.stringify(req.body)),
+        //imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     } : { ...req.body };
 
     delete beerObject._userId;
@@ -57,7 +58,18 @@ exports.updateBeer = (req, res) => {
 // Delete
 
 exports.deleteBeer = (req, res) => {
-    BeersModel.deleteOne({ _id: req.params.id})
-        .then(() => res.status(200).json({ message: 'Produit supprimé'}))
-        .catch(error => res.status(400).json({ error }));
+    BeersModel.findOne({_id: req.params.id})
+        .then(beer => {
+            if(beer.userId != req.auth.userId) {
+                res.status(401).json({message: 'Non-autorisé'})
+            } else {
+                const filename = beer.imageUrl.split('/image')[1];
+                fs.unlink(`images/${filename}`, () => {
+                    BeersModel.deleteOne({_id: req.params.id})
+                        .then(() => { res.status(200).json({message: 'Produit supprimé'})})
+                        .catch(error => res.status(401).json({ error }))
+                })
+            }
+        })
+        .catch(error => res.status(500).json({ error }));
 };

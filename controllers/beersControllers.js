@@ -38,7 +38,7 @@ exports.createBeer = (req, res, next) => {
 exports.updateBeer = (req, res) => {
     const beerObject = req.file ? {
         ...JSON.parse(JSON.stringify(req.body)),
-        //imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     } : { ...req.body };
 
     delete beerObject._userId;

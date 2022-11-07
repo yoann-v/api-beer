@@ -11,6 +11,8 @@ const userRoutes = require('./routes/userRoutes');
 app.use(express.json());
 app.use(bodyParser.json());
 
+// Sécurité CORS
+
 app.use(cors());
 
 app.all("/*", function(req, res, next) {
@@ -20,8 +22,18 @@ app.all("/*", function(req, res, next) {
     next();
   });
 
+// Route des produits
+
 app.use('/beers', beersRoutes);
+
+// Route authentification / connexion
+
 app.use('/auth', userRoutes);
+
+// Route images
+
 app.use('/images', express.static(path.join(__dirname, 'images')));
+
+// Serveur OK
 
 app.listen(5500, () => console.log('Serveur OK : 5500'));
